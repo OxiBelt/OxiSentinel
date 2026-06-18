@@ -1,0 +1,25 @@
+[package]
+name = "oxisentinel"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.96"
+license = "Apache-2.0"
+publish = false
+
+[features]
+default = []
+fuzzing = []
+
+[dependencies]
+
+[[bin]]
+name = "oxisentinel"
+path = "src/main.rs"
+
+[[bin]]
+name = "oxisentinelctl"
+path = "src/bin/oxisentinelctl.rs"
+
+[[test]]
+name = "workspace_structure"
+path = "../tests/rust/workspace_structure.rs"

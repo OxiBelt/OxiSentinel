@@ -1,0 +1,22 @@
+# Rust build outputs
+target/
+source/target/
+debug/
+
+# Node and TypeScript build outputs
+node_modules/
+**/node_modules/
+**/dist/
+*.tsbuildinfo
+
+# Local test and fuzz artifacts
+tests/.tmp/
+fuzz/artifacts/
+fuzz/corpus/
+
+# Formatter and editor byproducts
+**/*.rs.bk
+*.pdb
+
+# Agent scratch space
+.agents/temp/

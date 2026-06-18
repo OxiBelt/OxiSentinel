@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "rootDir": "source",
+    "outDir": "dist",
+    "noEmit": false,
+    "lib": ["ES2024", "DOM"]
+  },
+  "include": ["source/**/*.ts"]
+}

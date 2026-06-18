@@ -1,0 +1,11 @@
+.git
+.agents
+.codex
+target
+source/target
+node_modules
+**/node_modules
+**/dist
+tests/.tmp
+fuzz/artifacts
+fuzz/corpus

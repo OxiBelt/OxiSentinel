@@ -1,0 +1,16 @@
+replicaCount: 1
+
+image:
+  repository: oxisentinel
+  tag: latest
+  pullPolicy: IfNotPresent
+
+serviceAccount:
+  create: true
+  name: ""
+
+service:
+  type: ClusterIP
+  port: 8080
+
+resources: {}

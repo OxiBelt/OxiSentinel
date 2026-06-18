@@ -1,0 +1,19 @@
+[package]
+name = "oxisentinel-fuzz"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4.10"
+oxisentinel = { path = "../source", features = ["fuzzing"] }
+
+[[bin]]
+name = "runtime_description"
+path = "fuzz_targets/runtime_description.rs"
+test = false
+doc = false
+bench = false
