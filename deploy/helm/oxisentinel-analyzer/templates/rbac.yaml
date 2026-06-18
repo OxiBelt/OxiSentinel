@@ -1,0 +1,20 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "oxisentinel-analyzer.fullname" . }}
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "pods/log"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "oxisentinel-analyzer.fullname" . }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ default (include "oxisentinel-analyzer.fullname" .) .Values.serviceAccount.name }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "oxisentinel-analyzer.fullname" . }}

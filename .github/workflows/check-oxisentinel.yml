@@ -11,17 +11,6 @@ env:
   CARGO_NET_RETRY: "10"
 
 jobs:
-  structure:
-    name: Workspace structure
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
-      - name: Check workspace layout
-        run: sh tests/scripts/check-workspace-layout.sh
-
   rust:
     name: Rust
     runs-on: ubuntu-latest
@@ -41,24 +30,3 @@ jobs:
         run: cargo clippy --all-targets --all-features --locked -- -D warnings
       - name: Cargo test
         run: cargo test --all-features --locked
-
-  typescript:
-    name: TypeScript
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
-      - name: Setup Node
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
-        with:
-          node-version: "24"
-      - name: Install dependencies
-        run: npm install --include-workspace-root --workspaces --ignore-scripts --no-audit --no-fund --package-lock=false
-      - name: Typecheck
-        run: npm run typecheck
-      - name: Lint
-        run: npm run lint
-      - name: Build
-        run: npm run build

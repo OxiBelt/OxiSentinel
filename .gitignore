@@ -3,7 +3,7 @@ target/
 source/target/
 debug/
 
-# Node and TypeScript build outputs
+# Local dependency and generated build outputs
 node_modules/
 **/node_modules/
 **/dist/

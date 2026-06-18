@@ -1,6 +1,6 @@
-use oxisentinel::{RuntimeRole, ServiceConfig, describe_runtime};
+use oxisentinel::{AnalyzerConfig, RuntimeRole, describe_runtime};
 
 fn main() {
-  let config = ServiceConfig::default();
-  println!("{}", describe_runtime(RuntimeRole::Service, &config));
+  let config = AnalyzerConfig::default();
+  println!("{}", describe_runtime(RuntimeRole::Daemon, &config));
 }

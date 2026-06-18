@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "oxisentinel-gateway-controller.fullname" . }}
+  name: {{ include "oxisentinel-analyzer.fullname" . }}
   labels:
-    app.kubernetes.io/name: {{ include "oxisentinel-gateway-controller.name" . }}
+    app.kubernetes.io/name: {{ include "oxisentinel-analyzer.name" . }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "oxisentinel-gateway-controller.name" . }}
+      app.kubernetes.io/name: {{ include "oxisentinel-analyzer.name" . }}
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ include "oxisentinel-gateway-controller.name" . }}
+        app.kubernetes.io/name: {{ include "oxisentinel-analyzer.name" . }}
     spec:
-      serviceAccountName: {{ default (include "oxisentinel-gateway-controller.fullname" .) .Values.serviceAccount.name }}
+      serviceAccountName: {{ default (include "oxisentinel-analyzer.fullname" .) .Values.serviceAccount.name }}
       containers:
-        - name: controller
+        - name: analyzer
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:

@@ -1,20 +1,20 @@
-use crate::ServiceConfig;
+use crate::AnalyzerConfig;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum RuntimeRole {
-  Service,
+  Daemon,
   Control,
 }
 
-pub fn describe_runtime(role: RuntimeRole, config: &ServiceConfig) -> String {
+pub fn describe_runtime(role: RuntimeRole, config: &AnalyzerConfig) -> String {
   let role_name = match role {
-    RuntimeRole::Service => "service",
+    RuntimeRole::Daemon => "daemon",
     RuntimeRole::Control => "control",
   };
 
   format!(
     "{} {} listening on {}",
-    config.service_name(),
+    config.program_name(),
     role_name,
     config.bind_addr()
   )

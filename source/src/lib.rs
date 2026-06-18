@@ -2,19 +2,19 @@ pub mod config;
 pub mod diagnostics;
 pub mod runtime;
 
-pub use config::ServiceConfig;
+pub use config::AnalyzerConfig;
 pub use diagnostics::{HealthReport, HealthStatus, health_report};
 pub use runtime::{RuntimeRole, describe_runtime};
 
 #[cfg(test)]
 mod tests {
-  use super::{HealthStatus, ServiceConfig, health_report};
+  use super::{AnalyzerConfig, HealthStatus, health_report};
 
   #[test]
-  fn default_service_config_names_oxisentinel() {
-    let config = ServiceConfig::default();
+  fn default_analyzer_config_names_oxisentinel() {
+    let config = AnalyzerConfig::default();
 
-    assert_eq!(config.service_name(), "oxisentinel");
+    assert_eq!(config.program_name(), "oxisentinel");
     assert_eq!(config.bind_addr(), "127.0.0.1:8080");
   }
 

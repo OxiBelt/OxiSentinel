@@ -1,18 +1,18 @@
 # OxiSentinel
 
-OxiSentinel is organized as a Rust and TypeScript monorepo.
+OxiSentinel is a CLI and daemon-like Docker container analyzer for OxiBelt program logs, access logs, WAF events, and dynamic policy signals.
 
-The repository root owns shared tooling and workspace configuration. Product runtime code lives in `source`, fuzz targets live in `fuzz`, browser-facing TypeScript packages live under `ui`, and operational assets live under `deploy`.
+The repository root owns shared tooling and workspace configuration. Product code lives in `source`, fuzz targets live in `fuzz`, operational assets live under `deploy`, and integration coverage lives under `tests`.
+
+OxiSentinel is expected to collect analyzer inputs from sources such as `docker logs`, `journalctl`, interprogram OpenAPI access, and access-log files or streams when available.
 
 ## Workspace Layout
 
-- `source`: Rust service, library, and command-line binaries.
-- `fuzz`: cargo-fuzz package for protocol and parser fuzz targets.
-- `ui`: TypeScript workspace packages.
-- `docs`: architecture, configuration, and operator notes.
-- `deploy`: Helm and observability assets.
+- `source`: Rust analyzer library, daemon entrypoint, and CLI entrypoint.
+- `fuzz`: cargo-fuzz package for parser and normalization targets.
+- `docs`: architecture, configuration, and operations notes.
+- `deploy`: Docker and Helm assets for running the analyzer daemon.
 - `tests`: Rust integration tests, scripts, Docker helpers, and fixtures.
-- `kernel-extension`: system-level install and verification assets.
 
 ## Local Checks
 
@@ -20,7 +20,4 @@ The repository root owns shared tooling and workspace configuration. Product run
 cargo fmt --check
 cargo clippy --all-targets --all-features --locked -- -D warnings
 cargo test --all-features --locked
-npm run typecheck
-npm run lint
-npm run build
 ```
