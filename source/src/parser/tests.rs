@@ -1,4 +1,7 @@
-use super::{NormalizedLogRecord, ParseSource, parse_line, parse_reader};
+use super::provider::{
+  LogSourceProvider, ParseContext, SourceDescriptor, SourceLane, SourceRegistry,
+};
+use super::{NormalizedLogRecord, ParseSource, parse_line, parse_reader, parse_records};
 
 #[test]
 fn parses_docker_json_log_records() {
@@ -113,8 +116,72 @@ fn parse_reader_emits_normalized_ndjson() {
   assert!(output.contains(r#""message":"daemon ready""#));
 }
 
+#[test]
+fn parses_openapi_collection_records() {
+  let records = parse_records(
+    r#"{"audit":[{"request_id":"req-1","actor":"admin","service":"admin","operation":"list","outcome":"success","created_at":"2026-06-18T10:00:06Z"},{"request_id":"req-2","actor":"admin","service":"admin","operation":"delete","outcome":"denied","created_at":"2026-06-18T10:00:07Z"}]}"#,
+    ParseSource::Auto,
+  )
+  .expect("openapi records parse");
+
+  assert_eq!(records.len(), 2);
+  assert_eq!(records[0].source, "openapi");
+  assert_eq!(records[0].service.as_deref(), Some("admin"));
+  assert_eq!(records[0].level.as_deref(), Some("info"));
+  assert_eq!(records[0].message, "success");
+  assert_eq!(
+    records[0].attributes.get("request_id").map(String::as_str),
+    Some("req-1")
+  );
+  assert_eq!(records[1].level.as_deref(), Some("error"));
+  assert_eq!(records[1].message, "denied");
+}
+
+#[test]
+fn provider_registry_can_add_sources_without_central_parse_changes() {
+  static TEST_PROVIDER: TestProvider = TestProvider;
+  let providers: &[&dyn LogSourceProvider] = &[&TEST_PROVIDER];
+  let registry = SourceRegistry::new(providers);
+  let source = registry
+    .parse_source("example-idp")
+    .expect("test source resolves");
+
+  let records = registry
+    .parse_line_records("accepted", &source, 1)
+    .expect("test provider parses");
+
+  assert_eq!(records.len(), 1);
+  assert_eq!(records[0].source, "example_idp");
+  assert_eq!(records[0].message, "accepted");
+}
+
 fn parse_one(line: &str, source: ParseSource) -> NormalizedLogRecord {
   parse_line(line, source)
     .expect("line parses")
     .expect("line normalizes")
+}
+
+struct TestProvider;
+
+const TEST_DESCRIPTORS: &[SourceDescriptor] = &[SourceDescriptor {
+  canonical: "example_idp",
+  aliases: &["example-idp", "example_idp"],
+  lane: SourceLane::Application,
+}];
+
+impl LogSourceProvider for TestProvider {
+  fn descriptors(&self) -> &'static [SourceDescriptor] {
+    TEST_DESCRIPTORS
+  }
+
+  fn normalize_text(
+    &self,
+    payload: &str,
+    context: &ParseContext<'_>,
+  ) -> Option<Vec<NormalizedLogRecord>> {
+    Some(vec![NormalizedLogRecord::new(
+      context.requested_source,
+      payload,
+    )])
+  }
 }

@@ -26,6 +26,10 @@ RUN if [ -n "${RUST_TARGET_CPU}" ]; then \
       --bin oxisentinel \
       --bin oxisentinelctl
 
+FROM build AS parser-tests
+
+RUN cargo test --locked -p oxisentinel parser
+
 FROM scratch
 
 ARG RUST_TARGET=x86_64-unknown-linux-musl
@@ -34,7 +38,7 @@ COPY --from=build /workspace/target/${RUST_TARGET}/release/oxisentinel /usr/loca
 COPY --from=build /workspace/target/${RUST_TARGET}/release/oxisentinelctl /usr/local/bin/oxisentinelctl
 
 LABEL org.opencontainers.image.title="OxiSentinel"
-LABEL org.opencontainers.image.description="Container-only OxiSentinel analyzer runtime and control parser utility."
+LABEL org.opencontainers.image.description="Container-only OxiSentinel analyzer runtime and control utility."
 
 ENV PATH="/usr/local/bin:/usr/bin:/bin"
 

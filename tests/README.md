@@ -15,7 +15,8 @@ cargo test --all-features --locked
 Docker integration tests should build the OxiSentinel image first and exercise the in-container control path:
 
 ```sh
-tests/docker/parse-smoke.sh
+tests/docker/control-smoke.sh
+tests/docker/parser-unit-smoke.sh
 ```
 
-Journald integration tests should only run when Docker, the journald log driver, and `journalctl` are available. When any prerequisite is missing, tests must skip with a clear message instead of failing for host capability.
+Future live journald integration tests should only run when Docker, the journald log driver, and `journalctl` are available. When any prerequisite is missing, tests must skip with a clear message instead of failing for host capability.

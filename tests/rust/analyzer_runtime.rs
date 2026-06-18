@@ -1,4 +1,3 @@
-use std::io::Write;
 use std::process::{Command, Stdio};
 
 use oxisentinel::{AnalyzerConfig, RuntimeRole, describe_runtime};
@@ -14,26 +13,13 @@ fn daemon_runtime_description_uses_package_defaults() {
 }
 
 #[test]
-fn control_parse_command_reads_stdin_and_emits_ndjson() {
-  let mut command = Command::new(env!("CARGO_BIN_EXE_oxisentinelctl"))
-    .args(["parse", "--source", "auto", "--input", "-"])
-    .stdin(Stdio::piped())
+fn control_health_command_uses_package_defaults() {
+  let output = Command::new(env!("CARGO_BIN_EXE_oxisentinelctl"))
+    .arg("health")
     .stdout(Stdio::piped())
     .stderr(Stdio::piped())
-    .spawn()
-    .expect("spawn oxisentinelctl");
-
-  command
-    .stdin
-    .as_mut()
-    .expect("stdin available")
-    .write_all(
-      br#"{"log":"{\"level\":\"INFO\",\"service\":\"oxibelt\",\"msg\":\"allowed\"}\n","stream":"stdout","time":"2026-06-18T10:00:00.000000000Z"}
-"#,
-    )
-    .expect("write stdin");
-
-  let output = command.wait_with_output().expect("read output");
+    .output()
+    .expect("run oxisentinelctl health");
 
   assert!(
     output.status.success(),
@@ -42,13 +28,24 @@ fn control_parse_command_reads_stdin_and_emits_ndjson() {
   );
 
   let stdout = String::from_utf8(output.stdout).expect("stdout is utf-8");
+  assert!(stdout.contains("oxisentinel control listening on 127.0.0.1:8080"));
+  assert!(stdout.contains("health: workspace scaffold is ready"));
+}
 
-  assert!(stdout.contains(r#""schema":"oxisentinel.log.v1""#));
-  assert!(stdout.contains(r#""source":"docker_logs""#));
-  assert!(stdout.contains(r#""level":"info""#));
-  assert!(stdout.contains(r#""service":"oxibelt""#));
-  assert!(stdout.contains(r#""message":"allowed""#));
-  assert!(stdout.contains(r#""stream":"stdout""#));
+#[test]
+fn control_parse_command_is_not_exposed() {
+  let output = Command::new(env!("CARGO_BIN_EXE_oxisentinelctl"))
+    .arg("parse")
+    .stdout(Stdio::piped())
+    .stderr(Stdio::piped())
+    .output()
+    .expect("run oxisentinelctl parse");
+
+  assert!(!output.status.success(), "parse command should fail");
+
+  let stderr = String::from_utf8(output.stderr).expect("stderr is utf-8");
+  assert!(stderr.contains("unknown command: parse"));
+  assert!(stderr.contains("oxisentinelctl health"));
 }
 
 #[test]
@@ -70,5 +67,9 @@ fn dockerfile_installs_runtime_and_control_binaries() {
   assert!(
     dockerfile.contains(r#"ENV PATH="/usr/local/bin:/usr/bin:/bin""#),
     "control utility must be reachable by name through docker exec"
+  );
+  assert!(
+    dockerfile.contains("FROM build AS parser-tests"),
+    "internal parser tests should have a Docker build target"
   );
 }

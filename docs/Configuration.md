@@ -8,7 +8,6 @@ OxiSentinel is configured and operated through its container image. Do not insta
 
 ```sh
 docker exec -it oxisentinel oxisentinelctl health
-docker exec -i oxisentinel oxisentinelctl parse --source auto --input -
 ```
 
 Configuration should model analyzer behavior directly: collection sources, access-log parsing, WAF event interpretation, dynamic policy analysis, redaction, retention, reporting, and diagnostics.

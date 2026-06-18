@@ -14,7 +14,7 @@ Supported collection lanes should stay explicit:
 The runtime image installs two binaries:
 
 - `/usr/local/bin/oxisentinel`: the image entrypoint and long-running analyzer process.
-- `/usr/local/bin/oxisentinelctl`: control, diagnostics, and parser utility executed inside a running analyzer container or as a one-shot utility container.
+- `/usr/local/bin/oxisentinelctl`: control and diagnostics utility executed inside a running analyzer container.
 
 Use `--name oxisentinel` for the running analyzer container when possible. Interactive control commands should use:
 
@@ -22,19 +22,7 @@ Use `--name oxisentinel` for the running analyzer container when possible. Inter
 docker exec -it oxisentinel oxisentinelctl health
 ```
 
-Scripted stdin parsing should use:
-
-```sh
-docker exec -i oxisentinel oxisentinelctl parse --source auto --input -
-```
-
-One-shot parsing without a long-running container should use:
-
-```sh
-docker run --rm -i --entrypoint /usr/local/bin/oxisentinelctl oxisentinel:latest parse --source auto --input -
-```
-
-`oxisentinelctl parse` is the primary parser entrypoint. It normalizes Docker JSON log driver records, Docker journald records, Linux journal JSON, OxiBelt, Authelia, Ory, VoidAuth, and Vaultwarden input to NDJSON records using the `oxisentinel.log.v1` schema.
+Parser internals normalize Docker JSON log driver records, Docker journald records, Linux journal JSON, OxiBelt Admin API response records, OxiBelt, Authelia, Ory, VoidAuth, and Vaultwarden input to records using the `oxisentinel.log.v1` schema. The parser is intentionally internal until collection and analyzer workflows are wired to expose supported operator behavior.
 
 ## Image Targets
 

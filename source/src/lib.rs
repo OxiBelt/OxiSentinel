@@ -7,7 +7,6 @@ pub mod runtime;
 pub use config::AnalyzerConfig;
 pub use diagnostics::{HealthReport, HealthStatus, health_report};
 pub use image_targets::{ImageBuildTarget, TargetError, validate_image_target};
-pub use parser::{NormalizedLogRecord, ParseError, ParseSource, parse_line, parse_reader};
 pub use runtime::{RuntimeRole, describe_runtime};
 
 #[cfg(test)]
