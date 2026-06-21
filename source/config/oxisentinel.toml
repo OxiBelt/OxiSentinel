@@ -1,3 +1,36 @@
 [analyzer]
 name = "oxisentinel"
 bind_addr = "127.0.0.1:8080"
+
+[condition]
+enabled = true
+condition_dir = "conditions"
+
+[[condition.pattern_sets]]
+name = "policy-denials"
+kind = "contains"
+patterns = ["denied", "blocked"]
+
+[[condition.rules]]
+name = "oxibelt-policy-denial"
+priority = 100
+when = "Log.Source == 'oxibelt' && Log.Message.containsAny('policy-denials')"
+
+[judgment]
+enabled = true
+mode = "monitor"
+
+[[judgment.handlers]]
+name = "record-policy-denial"
+condition = "oxibelt-policy-denial"
+priority = 100
+
+[[judgment.handlers.actions]]
+type = "emit_callback_intent"
+target = "oxibelt_dynamic_policy"
+operation = "apply"
+dedupe_key = "oxibelt-policy-denial"
+
+[judgment.handlers.actions.payload]
+source = "oxisentinel"
+name = "oxibelt-policy-denial"

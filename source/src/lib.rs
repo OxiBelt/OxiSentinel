@@ -1,12 +1,16 @@
+pub mod admin;
+pub mod condition;
 pub mod config;
 pub mod diagnostics;
 pub mod image_targets;
+pub mod judgment;
 pub mod parser;
 pub mod runtime;
 
 pub use config::AnalyzerConfig;
 pub use diagnostics::{HealthReport, HealthStatus, health_report};
 pub use image_targets::{ImageBuildTarget, TargetError, validate_image_target};
+pub use judgment::{JudgmentDecision, JudgmentRuntime, JudgmentStatus};
 pub use runtime::{RuntimeRole, describe_runtime};
 
 #[cfg(test)]

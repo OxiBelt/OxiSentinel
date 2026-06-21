@@ -49,6 +49,56 @@ fn control_parse_command_is_not_exposed() {
 }
 
 #[test]
+fn control_judgment_check_validates_config() {
+  let path = std::env::temp_dir().join(format!(
+    "oxisentinel-judgment-check-{}.toml",
+    std::process::id()
+  ));
+  std::fs::write(
+    &path,
+    r#"
+[condition]
+enabled = true
+
+[[condition.rules]]
+name = "denied"
+when = "Log.Message.contains('denied')"
+
+[judgment]
+enabled = true
+
+[[judgment.handlers]]
+name = "record-denied"
+condition = "denied"
+
+[[judgment.handlers.actions]]
+type = "emit_decision"
+severity = "warning"
+"#,
+  )
+  .expect("write temp config");
+
+  let output = Command::new(env!("CARGO_BIN_EXE_oxisentinelctl"))
+    .args(["judgment", "check", "--config"])
+    .arg(&path)
+    .stdout(Stdio::piped())
+    .stderr(Stdio::piped())
+    .output()
+    .expect("run oxisentinelctl judgment check");
+  let _ = std::fs::remove_file(&path);
+
+  assert!(
+    output.status.success(),
+    "stderr: {}",
+    String::from_utf8_lossy(&output.stderr)
+  );
+
+  let stdout = String::from_utf8(output.stdout).expect("stdout is utf-8");
+  assert!(stdout.contains(r#""enabled":true"#));
+  assert!(stdout.contains(r#""name":"denied""#));
+}
+
+#[test]
 fn dockerfile_installs_runtime_and_control_binaries() {
   let dockerfile = include_str!("../../source/ops/Dockerfile");
 

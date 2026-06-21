@@ -24,6 +24,20 @@ docker exec -it oxisentinel oxisentinelctl health
 
 Parser internals normalize Docker JSON log driver records, Docker journald records, Linux journal JSON, OxiBelt Admin API response records, OxiBelt, Authelia, Ory, VoidAuth, and Vaultwarden input to records using the `oxisentinel.log.v1` schema. The parser is intentionally internal until collection and analyzer workflows are wired to expose supported operator behavior.
 
+## Condition And Judgment Runtime
+
+Normalized records can be evaluated by the condition runtime. Conditions are
+compiled on load with `online-dsl-forge` using the OxiRule-compatible dialect,
+then evaluated per record against `Log`, `Context`, `Request`, and
+`DynamicPolicy` values.
+
+The judgment runtime stores an immutable compiled snapshot behind shared
+process state. Admin API and `oxisentinelctl` updates replace the whole
+snapshot after validation and protect mutating imports with generation ETags.
+Matched handlers emit local judgment decisions and callback intents for OxiBelt
+WAF or dynamic-policy follow-up; evaluation does not perform outbound Admin API
+mutations directly.
+
 ## Image Targets
 
 The image build contract supports:
