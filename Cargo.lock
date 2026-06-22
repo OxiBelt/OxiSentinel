@@ -115,7 +115,9 @@ checksum = "88904434abc2901f197fe8cc55f0445e7ded921dba5911dad2e2b39b48e663c4"
 
 [[package]]
 name = "online-dsl-forge"
-version = "0.0.0"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8301925a831accae80806e82a855963b6765df169eada29c279588537ee11d9c"
 dependencies = [
  "regex",
  "serde",
